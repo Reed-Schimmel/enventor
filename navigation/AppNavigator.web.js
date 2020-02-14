@@ -1,9 +1,9 @@
 import { createBrowserApp } from '@react-navigation/web';
 import { createStackNavigator } from 'react-navigation-stack';
-import HomeScreen from '../screens/HomeScreen';
+import EventScreen from '../screens/EventScreen';
 
 const MainStackNav = createStackNavigator({
-  Home: HomeScreen
+  Event: EventScreen
 }, {
   headerMode: 'screen'
 });
