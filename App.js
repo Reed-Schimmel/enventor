@@ -4,8 +4,12 @@ import * as Font from 'expo-font';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import firebase from 'firebase';
 
+import firebaseConfig from './firebaseConfig';
 import AppNavigator from './navigation/AppNavigator';
+
+firebase.initializeApp(firebaseConfig);
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
