@@ -1,9 +1,9 @@
 import { createBrowserApp } from '@react-navigation/web';
 import { createStackNavigator } from 'react-navigation-stack';
-import HomeScreen from '../screens/HomeScreen';
+import CalendarScreen from '../screens/CalendarScreen';
 
 const MainStackNav = createStackNavigator({
-  Home: HomeScreen
+  Home: CalendarScreen
 }, {
   headerMode: 'screen'
 });
