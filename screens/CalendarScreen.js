@@ -40,20 +40,8 @@ const CalendarScreen = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // borderWidth: 10,
-    // borderColor: 'red',
   },
-  calendar: {
-    flex: 1,
-    alignSelf: 'stretch',
-    alignContent: 'space-between',
-    justifyContent: 'stretch',
-    flexShrink: 0,
-    flexGrow: 1,
-    alignItems: 'stretch',
-    // height: '80%',
-    // borderWidth: 10,
-  },
+  calendar: {},
   floatingButton: {},
   input: {
     height: '10%',

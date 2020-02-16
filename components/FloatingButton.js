@@ -1,5 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import Colors from '../constants/Colors';
 
 export default ({ onPress, title, style }) => (
   <TouchableOpacity
@@ -20,7 +21,7 @@ const styles = StyleSheet.create({
     width: 100,
     borderRadius: 50,
     zIndex: 10,
-    backgroundColor: 'blue',
+    backgroundColor: Colors.theme.main,
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',

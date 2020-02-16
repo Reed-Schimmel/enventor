@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, StyleSheet, TextInput } from 'react-native';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
+import Colors from '../constants/Colors';
 
 // https://github.com/wix/react-native-calendars
 // https://github.com/wix/react-native-calendars/blob/master/src/calendar/day/basic/style.js
@@ -10,8 +11,12 @@ export default ({ selectedDate, onDayPress }) => (
     style={styles.calendar}
     hideArrows={false}
     onDayPress={onDayPress}
-    markedDates={{ [selectedDate.dateString]: { selected: true, marked: true, selectedColor: '#ADD8E6' } }}
+    markedDates={{ [selectedDate.dateString]: { selected: true, marked: true } }}
     theme={{
+      calendarBackground: Colors.theme.lightShades,
+      selectedDayBackgroundColor: Colors.theme.darkAccent,
+      // indicatorColor: Colors.theme.darkShades,
+      // textSectionTitleColor: Colors.theme.darkShades,
       // 'stylesheet.calendar.header': {
       //   week: {
       //     marginTop: 5,
@@ -21,12 +26,8 @@ export default ({ selectedDate, onDayPress }) => (
       // },
       'stylesheet.calendar.main': {
         week: {
-          // marginTop: 5,
           flexDirection: 'row',
-          // justifyContent: 'space-between',
-          // borderWidth: 5,
           flexGrow: 1,
-          // alignSelf: 'stretch',
           alignContent: 'center',
           textAlign: 'center',
           textAlignVertical: 'center',
@@ -40,13 +41,13 @@ export default ({ selectedDate, onDayPress }) => (
 
       },
       // 'stylesheet.day.basic': {
-      //   base: {
-      //     borderWidth: 1,
-      //     // height: 100
-      //     alignSelf: 'stretch',
-      //     flex:1,
-      //     flexGrow: 1,
-      //   }
+        // base: {
+          // borderWidth: 1,
+          // height: 100
+          // alignSelf: 'stretch',
+          // flex:1,
+          // flexGrow: 1,
+        // }
       // }
 
     }}
