@@ -40,6 +40,7 @@ const CalendarScreen = (props) => {
         (eventName && selectDate)
           && dataLoading
           ? <ActivityIndicator
+            size="large"
             style={{
               position: 'absolute',
               top: '50%',
