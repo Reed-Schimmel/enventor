@@ -31,22 +31,22 @@ const CalendarScreen = (props) => {
         setDataLoading(false);
       });
   }
-
+  console.log(eventName, selectedDate)
   return (
     <>
       {
-        (eventName && selectDate)
-          && dataLoading
-          ? <ActivityIndicator
+          dataLoading &&
+          <ActivityIndicator
             size="large"
             style={{
               position: 'absolute',
               top: '50%',
               left: '50%',
               alignSelf: 'center',
+              zIndex: 10,
             }}
-          />
-          : <FloatingButton
+          />}
+          {(eventName && selectDate) && <FloatingButton
             title="Make Event"
             onPress={onMakeEvent}
             style={styles.floatingButton}
