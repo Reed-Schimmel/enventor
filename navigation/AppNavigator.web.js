@@ -4,10 +4,20 @@ import CalendarScreen from '../screens/CalendarScreen';
 import EventScreen from '../screens/EventScreen';
 
 const MainStackNav = createStackNavigator({
-  Home: CalendarScreen,
+  Home: {
+    screen: CalendarScreen,
+    navigationOptions: ({ navigation }) => ({
+      // title: `${navigation.state.params.name}'s Profile'`,
+      headerShown: false
+    }),
+  },
   Event: EventScreen,
 }, {
-  headerMode: 'screen'
+  headerMode: 'screen',
+  defaultNavigationOptions: {
+    // headerShown: false,
+    // headerStyle
+  },
 });
 
 export default createBrowserApp(MainStackNav, { history: 'hash' });
