@@ -6,8 +6,6 @@ import FloatingButton from '../components/FloatingButton'
 import Calendar from '../components/CalendarStyled';
 
 const CalendarScreen = (props) => {
-  const { eventData } = props; // TODO: data does not yet exist
-
   const [eventName, setEventName] = useState('');
   const [selectedDate, selectDate] = useState('');
   const [dataLoading, setDataLoading] = useState(false);
