@@ -1,27 +1,27 @@
 import React, {Component} from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, ImageBackground } from 'react-native';
 
 
-export default ({names}) => (
-    
-    <View style = {styles.container} textStyle = {styles.text}>
-        <Text>{names}</Text>
+export default ({names, time}) => (
+    <View> 
+        <Text>{time} {names}</Text> 
     </View>
+
 )
 
 const styles = StyleSheet.create({
     container: {
-      flexDirection: "row", 
-      borderWidth: 1, 
-      justifyContent: "space-evenly",
-      height: 50,
-      
-
+        borderWidth: 1,
+        height: 50,
+        flexDirection: 'row', 
     },
 
     text: {
-         textAlign: 'center' 
-              
-  
+        
+        textAlignVertical: "center",
+        
+        
+
     },
-  });
+  
+});
