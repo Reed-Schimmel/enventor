@@ -6,6 +6,7 @@ import FloatingButton from '../components/FloatingButton'
 import Calendar from '../components/CalendarStyled';
 
 const CalendarScreen = (props) => {
+  // React useState docs: https://reactjs.org/docs/hooks-state.html
   const [eventName, setEventName] = useState('');
   const [selectedDate, selectDate] = useState('');
   const [dataLoading, setDataLoading] = useState(false);
@@ -19,6 +20,7 @@ const CalendarScreen = (props) => {
       people: [],
     }
     // this function call makes a new document in the database w/ the above object as its data
+    // Firebase firestore docs: https://firebase.google.com/docs/firestore/manage-data/add-data
     firebase.firestore().collection('events').doc().set(eventData)
       .then(() => {
         setEventName('');
