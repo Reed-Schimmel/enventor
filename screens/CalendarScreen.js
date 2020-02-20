@@ -31,22 +31,22 @@ const CalendarScreen = (props) => {
         setDataLoading(false);
       });
   }
-
+  console.log(eventName, selectedDate)
   return (
     <>
       {
-        (eventName && selectDate)
-          && dataLoading
-          ? <ActivityIndicator
+          dataLoading &&
+          <ActivityIndicator
             size="large"
             style={{
               position: 'absolute',
               top: '50%',
               left: '50%',
               alignSelf: 'center',
+              zIndex: 10,
             }}
-          />
-          : <FloatingButton
+          />}
+          {(eventName && selectDate) && <FloatingButton
             title="Make Event"
             onPress={onMakeEvent}
             style={styles.floatingButton}
@@ -73,20 +73,8 @@ const CalendarScreen = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // borderWidth: 10,
-    // borderColor: 'red',
   },
-  calendar: {
-    flex: 1,
-    alignSelf: 'stretch',
-    alignContent: 'space-between',
-    justifyContent: 'stretch',
-    flexShrink: 0,
-    flexGrow: 1,
-    alignItems: 'stretch',
-    // height: '80%',
-    // borderWidth: 10,
-  },
+  calendar: {},
   floatingButton: {},
   input: {
     height: '10%',
