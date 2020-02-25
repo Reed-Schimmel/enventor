@@ -5,8 +5,7 @@ import {View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Imag
 export default ({names, time}) => (
     <View style = {styles.container}> 
         <Text>{time}</Text> 
-        <Text>{names === "Invalid Time Slot"
-        ? names : names.join(", ")}</Text> 
+        <Text>{names}</Text> 
     </View>
 
 )

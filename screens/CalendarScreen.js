@@ -11,7 +11,7 @@ const CalendarScreen = (props) => {
   const [dataLoading, setDataLoading] = useState(false);
 
   // this function is called when the "Make Event" button is pressed
-  const onMakeEvent = () => {
+  const onMakeEvent = async () => {
     setDataLoading(true);
     const eventData = {
       ...selectedDate,
@@ -19,12 +19,13 @@ const CalendarScreen = (props) => {
       people: [],
     }
     // this function call makes a new document in the database w/ the above object as its data
-    firebase.firestore().collection('events').doc().set(eventData)
+    const docRef = await firebase.firestore().collection('events').doc()
+    docRef.set(eventData)
       .then(() => {
         setEventName('');
         selectDate('');
         setDataLoading(false);
-        props.navigation.navigate('Event', { eventData });
+        props.navigation.navigate('Event', { eventData: { ...eventData, eventId: docRef.id } });
       })
       .catch((e) => {
         console.log(e);
