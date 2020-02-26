@@ -18,7 +18,7 @@ export default ({ selectedDate, onDayPress, searchDates }) => {
   const otherDates = searchDates[0] ? searchDates.reduce((prev = {}, curr) => {
     return {
       ...prev,
-      [curr.dateString]: { marked: true, selected: true }
+      [curr.dateString]: { marked: true, selected: true, ...curr }
     }
   }) : {};
 
@@ -27,24 +27,19 @@ export default ({ selectedDate, onDayPress, searchDates }) => {
     <Calendar
       style={styles.calendar}
       hideArrows={false}
-      onDayPress={onDayPress}
+      onDayPress={day => {
+        if (otherDates[day.dateString]) {
+          console.log('dupe day')
+        }
+        onDayPress(day);
+      }}
       markedDates={{
         ...otherDates,
         [selectedDate.dateString]: { selected: true, marked: true, selectedColor: Colors.theme.darkAccent },
       }}
-      markingType={'multi-dot'}
       theme={{
         calendarBackground: Colors.theme.lightShades,
         selectedDayBackgroundColor: Colors.theme.lightAccent,
-        // indicatorColor: Colors.theme.darkShades,
-        // textSectionTitleColor: Colors.theme.darkShades,
-        // 'stylesheet.calendar.header': {
-        //   week: {
-        //     marginTop: 5,
-        //     flexDirection: 'row',
-        //     justifyContent: 'space-between'
-        //   }
-        // },
         'stylesheet.calendar.main': {
           week: {
             flexDirection: 'row',
@@ -61,16 +56,6 @@ export default ({ selectedDate, onDayPress, searchDates }) => {
           }
 
         },
-        // 'stylesheet.day.basic': {
-        // base: {
-        // borderWidth: 1,
-        // height: 100
-        // alignSelf: 'stretch',
-        // flex:1,
-        // flexGrow: 1,
-        // }
-        // }
-
       }}
     />
   )

@@ -1,7 +1,7 @@
 //Description: This file provides the code for the user interface of the calendar page.
 
 import React, { useState } from 'react';
-import { View, StyleSheet, TextInput, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, TextInput, ActivityIndicator, ScrollView, TouchableOpacity, Text } from 'react-native';
 import firebase from 'firebase';
 import { debounce } from 'lodash';
 
@@ -31,7 +31,7 @@ const searchEvents = debounce((text, callback) => {
       querySnapshot.forEach(function (doc) {
         // doc.data() is never undefined for query doc snapshots
         // console.log(doc.id, " => ", doc.data());
-        events.push(doc.data());
+        events.push({ ...doc.data(), eventId: doc.id });
       });
       callback(events);
     })
@@ -57,6 +57,20 @@ const CalendarScreen = (props) => {
     text ? searchEvents(text, setSearchDates) : setSearchDates([]);
     setEventName(text);
   }
+
+  const renderResults = () => (searchDates.length > 0)
+    && <>
+      <Text style={{ textAlign: 'center', fontSize: 24, margin: '10%' }} allowFontScaling> Search Results </Text>
+      {searchDates.map(result => (
+        <TouchableOpacity
+          style={{ flex: 1, marginHorizontal: '15%', marginVertical: 5, flexDirection: 'row', justifyContent: 'space-between' }}
+          onPress={() => props.navigation.navigate('Event', {eventId: result.eventId, eventData: result })}
+        >
+          <Text style={{ fontSize: 14, textAlign: 'auto' }} allowFontScaling>{result.title}</Text>
+          <Text style={{ fontSize: 14, textAlign: 'auto' }} allowFontScaling >{result.dateString}</Text>
+        </TouchableOpacity>
+      ))}
+    </>;
 
   //Description of the function onMakeEvent
   // @pre None
@@ -116,22 +130,27 @@ const CalendarScreen = (props) => {
         title="Make Event"
         onPress={onMakeEvent}
         style={styles.floatingButton}
-      />
-      }
-      <View style={styles.container}>
-        <TextInput
-          value={eventName}
-          onChangeText={inputTextChange}
-          style={styles.input}
-        />
-        <Calendar
-          onDayPress={date => {
-            console.log(date);
-            selectDate(date);
-          }}
-          selectedDate={selectedDate}
-          searchDates={searchDates}
-        />
+      />}
+
+      <View style={{ flexDirection: "row", flex: 1 }}>
+        <View style={styles.container}>
+          <TextInput
+            value={eventName}
+            onChangeText={inputTextChange}
+            style={styles.input}
+          />
+          <Calendar
+            onDayPress={date => {
+              console.log(date);
+              selectDate(date);
+            }}
+            selectedDate={selectedDate}
+            searchDates={searchDates}
+          />
+        </View>
+        <ScrollView style={{ flex: -1, maxWidth: '33%' }}>
+          {renderResults()}
+        </ScrollView>
       </View>
     </>
   );
