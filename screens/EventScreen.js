@@ -10,6 +10,7 @@ export default class EventScreen extends Component {
     super(props);
     this.props = props;
     this.eventData = props.navigation.getParam('eventData') //get the data from the calandar screen
+    this.eventId = props.navigation.getParam('eventId');
     this.state = {
 
       timeState: true, //if true the table is displayed in 12 hour mode, displayed in 24 hour mode if false
@@ -64,7 +65,7 @@ export default class EventScreen extends Component {
       ['22:00'], ['22:20'], ['22:40'],
       ['23:00'], ['23:20'], ['23:40']],
 
-      names: ['Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot', //array of string arrays to track the names of the attendees st each time slot
+      names: this.eventData.names || ['Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
         'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
         'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
         'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
@@ -87,9 +88,32 @@ export default class EventScreen extends Component {
     }
   }
 
+  // this lets us navigate back to home from this screen
+  static navigationOptions = ({ navigation }) => {
+    return {
+      headerRight: () => (
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+          <Text style={{ marginRight: 15 }}>Home</Text>
+        </TouchableOpacity>
+      )
+    }
+  }
+
   submitTimeSlots() {
-    firebase.firestore().collection('events').doc(this.eventData.eventId)
+    firebase.firestore().collection('events').doc(this.eventId)
       .update({ names: this.state.names });
+  }
+
+  // this is called after the screen renders for the first time
+  // it updates the page data with data from the database
+  async componentDidMount() {
+    firebase.firestore().collection('events').doc(this.eventId).get()
+      .then((docSnapshot) => {
+        const eventData = docSnapshot.data();
+        this.eventData = eventData;
+        this.setState({ ...this.state, names: eventData.names });
+      })
+      .catch((e) => console.log(e));
   }
 
   /**
@@ -214,11 +238,11 @@ export default class EventScreen extends Component {
           style={styles.submitButton}
         />
         <ScrollView style={styles.ScrollView}>
-          <FloatingButton 
-          title="12/24"
-          onPress={()=>this.changeTime()}
-          style={styles.timeButton}
-        />
+          <FloatingButton
+            title="12/24"
+            onPress={() => this.changeTime()}
+            style={styles.timeButton}
+          />
           <View style={styles.container}>
             <Text
               style={styles.eventTitle}>{this.eventData.title} {/* display the event title at the top of the page */}
