@@ -92,6 +92,7 @@ export default class EventScreen extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: navigation.getParam('title'),
+      headerTitleStyle: { textAlign: 'center', alignSelf: 'center', flex: 1 },
       headerRight: () => (
         <TouchableOpacity onPress={() => navigation.navigate('Home')}>
           <Text style={{ marginRight: 15 }}>Create Event</Text>
