@@ -15,7 +15,7 @@ export default ({ onPress, title, style }) => (
     onPress={onPress}
     style={[styles.floatingButton, style]}
   >
-    <Text style={{ color: 'white', fontSize: 20 }}>{title}</Text>
+    <Text allowFontScaling style={{ color: 'white', fontSize: 20 }}>{title}</Text>
   </TouchableOpacity>
 );
 

@@ -1,66 +1,66 @@
- //Description: This file is to implement the calendar styles.
+//Description: This file is to implement the calendar styles.
 import React from 'react'
-import { View, StyleSheet, TextInput } from 'react-native';
-import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
+import { StyleSheet } from 'react-native';
+import { Calendar } from 'react-native-calendars';
 import Colors from '../constants/Colors';
 
 //Reference https://github.com/wix/react-native-calendars
 // Reference https://github.com/wix/react-native-calendars/blob/master/src/calendar/day/basic/style.js
 
- //Description of the function on the right:
+//Description of the function on the right:
 
-     // @pre None
+// @pre None
 
-     //@post Description of calendar style
+//@post Description of calendar style
 
-     // @param selectedDate, onDayPress
-export default ({ selectedDate, onDayPress }) => (
-  <Calendar
-    style={styles.calendar}
-    hideArrows={false}
-    onDayPress={onDayPress}
-    markedDates={{ [selectedDate.dateString]: { selected: true, marked: true } }}
-    theme={{
-      calendarBackground: Colors.theme.lightShades,
-      selectedDayBackgroundColor: Colors.theme.darkAccent,
-      // indicatorColor: Colors.theme.darkShades,
-      // textSectionTitleColor: Colors.theme.darkShades,
-      // 'stylesheet.calendar.header': {
-      //   week: {
-      //     marginTop: 5,
-      //     flexDirection: 'row',
-      //     justifyContent: 'space-between'
-      //   }
-      // },
-      'stylesheet.calendar.main': {
-        week: {
-          flexDirection: 'row',
-          flexGrow: 1,
-          alignContent: 'center',
-          textAlign: 'center',
-          textAlignVertical: 'center',
-          justifyContent: 'center',
-          alignItems: 'center',
-        },
-        monthView: {
-          flex: 1,
-          alignItems: 'stretch'
+// @param selectedDate, onDayPress
+export default ({ selectedDate, onDayPress, searchDates }) => {
+  const otherDates = searchDates[0] ? searchDates.reduce((prev = {}, curr) => {
+    return {
+      ...prev,
+      [curr.dateString]: { marked: true, selected: true, ...curr }
+    }
+  }) : {};
+
+  // console.log(searchDates, otherDates);
+  return (
+    <Calendar
+      style={styles.calendar}
+      hideArrows={false}
+      onDayPress={day => {
+        if (otherDates[day.dateString]) {
+          console.log('dupe day')
         }
+        onDayPress(day);
+      }}
+      markedDates={{
+        ...otherDates,
+        [selectedDate.dateString]: { selected: true, marked: true, selectedColor: Colors.theme.darkAccent },
+      }}
+      theme={{
+        calendarBackground: Colors.theme.lightShades,
+        selectedDayBackgroundColor: Colors.theme.lightAccent,
+        'stylesheet.calendar.main': {
+          week: {
+            flexDirection: 'row',
+            flexGrow: 1,
+            alignContent: 'center',
+            textAlign: 'center',
+            textAlignVertical: 'center',
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
+          monthView: {
+            flex: 1,
+            alignItems: 'stretch'
+          }
 
-      },
-      // 'stylesheet.day.basic': {
-        // base: {
-          // borderWidth: 1,
-          // height: 100
-          // alignSelf: 'stretch',
-          // flex:1,
-          // flexGrow: 1,
-        // }
-      // }
+        },
+      }}
+    />
+  )
+};
 
-    }}
-  />
-);
 //Descriptions of components used in calendar page
 const styles = StyleSheet.create({
   container: {
@@ -83,4 +83,4 @@ const styles = StyleSheet.create({
   input: {
     height: '10%',
   }
-});
+})

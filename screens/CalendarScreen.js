@@ -1,48 +1,103 @@
- //Description: This file provides the code for the user interface of the calendar page.
+//Description: This file provides the code for the user interface of the calendar page.
 
 import React, { useState } from 'react';
-import { View, StyleSheet, TextInput, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, TextInput, ActivityIndicator, ScrollView, TouchableOpacity, Text } from 'react-native';
 import firebase from 'firebase';
+import { debounce } from 'lodash';
 
 import FloatingButton from '../components/FloatingButton'
 import Calendar from '../components/CalendarStyled';
 
-//Description of the function CalendarScreen:
-    //@pre None
 
-    // @post launches the CalendarScreen
+/**
+ * @description createSearchIndex
+ * @param text
+ */
+const createSearchIndex = (text) => text.toUpperCase().split('').sort().join('');
 
-    // @param props
+/**
+ * @description event search function
+ * @param {searchTerm} props 
+ * https://lodash.com/docs/4.17.15#debounce
+ */
+const searchEvents = debounce((text, callback) => {
+  const searchTerm = createSearchIndex(text);
+  console.log(searchTerm)
+  return firebase.firestore().collection('events')//.orderBy('searchTitle')
+    .where('searchTitle', '>=', searchTerm).where('searchTitle', '<=', searchTerm + '\uf8ff') // search for substring
+    .get()
+    .then((querySnapshot) => {
+      const events = [];
+      querySnapshot.forEach(function (doc) {
+        // doc.data() is never undefined for query doc snapshots
+        // console.log(doc.id, " => ", doc.data());
+        events.push({ ...doc.data(), eventId: doc.id });
+      });
+      callback(events);
+    })
+    .catch((error) => {
+      console.log("Error getting documents: ", error);
+      return [];
+    });
+}, 500);
+
+
+/** Description of the function CalendarScreen:
+@pre None
+@post launches the CalendarScreen
+@param props 
+*/
 const CalendarScreen = (props) => {
   const [eventName, setEventName] = useState('');
   const [selectedDate, selectDate] = useState('');
+  const [searchDates, setSearchDates] = useState([]);
   const [dataLoading, setDataLoading] = useState(false);
 
+  const inputTextChange = (text) => {
+    text ? searchEvents(text, setSearchDates) : setSearchDates([]);
+    setEventName(text);
+  }
+
+  const renderResults = () => (searchDates.length > 0)
+    && <>
+      <Text style={{ textAlign: 'center', fontSize: 24, margin: '10%' }} allowFontScaling> Search Results </Text>
+      {searchDates.map(result => (
+        <TouchableOpacity
+          style={{ flex: 1, marginHorizontal: '15%', marginVertical: 5, flexDirection: 'row', justifyContent: 'space-between' }}
+          onPress={() => props.navigation.navigate('Event', {eventId: result.eventId, eventData: result })}
+        >
+          <Text style={{ fontSize: 14, textAlign: 'auto' }} allowFontScaling>{result.title}</Text>
+          <Text style={{ fontSize: 14, textAlign: 'auto' }} allowFontScaling >{result.dateString}</Text>
+        </TouchableOpacity>
+      ))}
+    </>;
+
   //Description of the function onMakeEvent
-       // @pre None
+  // @pre None
 
-       //@post this function is called when the "Make Event" button is pressed
+  //@post this function is called when the "Make Event" button is pressed
 
-       // @param None
+  // @param None
   const onMakeEvent = async () => {
     setDataLoading(true);
     const eventData = {
       ...selectedDate,
       title: eventName,
+      searchTitle: createSearchIndex(eventName), // creates searchable index from title
       names: ['Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
-      'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
-      'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
-      'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
-      'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
-      '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
-      'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
-      '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
-      '', '', '', '', '', '', '', '', '', '', '', '']
+        'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
+        'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
+        'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
+        'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
+        '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
+        'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
+        '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
+        '', '', '', '', '', '', '', '', '', '', '', '']
     }
     //Description of the function below:
-        //@pre None
-        // @post this function call makes a new document in the database with the above object as its data
-        //@param None
+    //@pre None
+    // @post this function call makes a new document in the database with the above object as its data
+    //@param None
     const docRef = await firebase.firestore().collection('events').doc()
     docRef.set(eventData)
       .then(() => {
@@ -60,36 +115,42 @@ const CalendarScreen = (props) => {
   return (
     <>
       {
-          dataLoading &&
-          <ActivityIndicator
-            size="large"
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              alignSelf: 'center',
-              zIndex: 10,
-            }}
-          />}
-          {(eventName && selectedDate) && <FloatingButton
-            title="Make Event"
-            onPress={onMakeEvent}
-            style={styles.floatingButton}
-          />
-      }
-      <View style={styles.container}>
-        <TextInput
-          value={eventName}
-          onChangeText={text => setEventName(text)}
-          style={styles.input}
-        />
-        <Calendar
-          onDayPress={date => {
-            console.log(date);
-            selectDate(date);
+        dataLoading &&
+        <ActivityIndicator
+          size="large"
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            alignSelf: 'center',
+            zIndex: 10,
           }}
-          selectedDate={selectedDate}
-        />
+        />}
+      {(eventName && selectedDate) && <FloatingButton
+        title="Make Event"
+        onPress={onMakeEvent}
+        style={styles.floatingButton}
+      />}
+
+      <View style={{ flexDirection: "row", flex: 1 }}>
+        <View style={styles.container}>
+          <TextInput
+            value={eventName}
+            onChangeText={inputTextChange}
+            style={styles.input}
+          />
+          <Calendar
+            onDayPress={date => {
+              console.log(date);
+              selectDate(date);
+            }}
+            selectedDate={selectedDate}
+            searchDates={searchDates}
+          />
+        </View>
+        <ScrollView style={{ flex: -1, maxWidth: '33%' }}>
+          {renderResults()}
+        </ScrollView>
       </View>
     </>
   );
@@ -106,6 +167,7 @@ const styles = StyleSheet.create({
   floatingButton: {},
   input: {
     height: '10%',
+    fontSize: 32,
   }
 });
 
