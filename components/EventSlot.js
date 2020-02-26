@@ -1,12 +1,13 @@
  //Description: This file is to implement the event slot.
 import React, {Component} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
 
 export default ({names, time}) => (
-    <View style = {styles.container}> 
-        <Text>{time}</Text> 
-        <Text>{names}</Text> 
+    <View style={[
+        styles.container, names == 'Invalid Time Slot' ? {backgroundColor: "grey"} : null]}> 
+        <Text style = {styles.text}>{time}</Text> 
+        <Text style = {styles.text}>{names}</Text> 
     </View>
 
 )
@@ -15,16 +16,14 @@ const styles = StyleSheet.create({
     container: {
         borderWidth: 1,
         height: 50,
-        flexDirection: "row",
-        justifyContent: "space-evenly"
+        flexDirection: "column",
+        justifyContent: "space-evenly",
+        alignItems: "center",
         },
 
-    text: {
-        ///alignItems: "center"
-        textAlignVertical: "center",
-        
-        
+        text: {
+            fontFamily: 'calibri',
+            fontSize: 20,
+        },
 
-    },
-  
 });

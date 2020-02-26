@@ -56,7 +56,7 @@ const CalendarScreen = (props) => {
         setDataLoading(false);
       });
   }
-  console.log(eventName, selectedDate)
+  // console.log({eventName}, {selectedDate})
   return (
     <>
       {
@@ -71,7 +71,7 @@ const CalendarScreen = (props) => {
               zIndex: 10,
             }}
           />}
-          {(eventName && selectDate) && <FloatingButton
+          {(eventName && selectedDate) && <FloatingButton
             title="Make Event"
             onPress={onMakeEvent}
             style={styles.floatingButton}
