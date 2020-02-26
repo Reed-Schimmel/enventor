@@ -4,6 +4,7 @@ import { Col } from 'react-native-table-component';
 import EventSlot from '../components/EventSlot'
 import FloatingButton from '../components/FloatingButton'
 import firebase from 'firebase';
+import Colors from '../constants/Colors';
 
 export default class EventScreen extends Component {
   constructor(props) {
@@ -92,10 +93,18 @@ export default class EventScreen extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: navigation.getParam('title'),
-      headerTitleStyle: { textAlign: 'center', alignSelf: 'center', flex: 1 },
+      headerTitleStyle: {
+        textAlign: 'center',
+        alignSelf: 'center',
+        flex: 1,
+        color: 'white',
+      },
+      headerStyle: {
+        backgroundColor: Colors.theme.main,
+      },
       headerLeft: () => (
         <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-          <Text style={{ marginLeft: 15 }}>Create Event</Text>
+          <Text style={{ marginLeft: 15, color: 'white' }}>Create Event</Text>
         </TouchableOpacity>
       )
     };
