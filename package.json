@@ -6,7 +6,8 @@
   "scripts": {
     "start": "expo start --web",
     "eject": "expo eject",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "build-docs": "docco *.js ./screens/*.js ./components/*.js ./navigation/*.js ./constants/*.js -o ./documentation"
   },
   "jest": {
     "preset": "jest-expo"

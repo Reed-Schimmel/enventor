@@ -1,7 +1,15 @@
+ //Description: This file is to implement the floating button.
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import Colors from '../constants/Colors';
 
+ //Description of the function on the right:
+
+     // @pre None
+
+     //@post function to implement floating button
+
+     //@param onPress, title, style
 export default ({ onPress, title, style }) => (
   <TouchableOpacity
     onPress={onPress}
@@ -11,7 +19,7 @@ export default ({ onPress, title, style }) => (
   </TouchableOpacity>
 );
 
-
+   // Description of floating button on the page
 const styles = StyleSheet.create({
   floatingButton: {
     position: 'absolute',

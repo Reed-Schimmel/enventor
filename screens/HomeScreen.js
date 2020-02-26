@@ -1,3 +1,6 @@
+
+ //Description: This file provides the code for the user interface of the HomeScreen page.
+
 import * as WebBrowser from 'expo-web-browser';
 import React from 'react';
 import {
@@ -12,6 +15,14 @@ import {
 
 import { MonoText } from '../components/StyledText';
 
+
+//Description of the function HomeScreen:
+
+     // @pre None
+
+     // @post Description of HomeScreen page for the app
+
+     //@param None
 export default function HomeScreen() {
   return (
     <View style={styles.container}>
@@ -73,6 +84,13 @@ HomeScreen.navigationOptions = {
   header: null,
 };
 
+//Description of the function DevelopmentModeNotice:
+
+     // @pre None
+
+     //@post Function to let user know if development mode is enabled
+
+     //@param None
 function DevelopmentModeNotice() {
   if (__DEV__) {
     const learnMoreButton = (
@@ -96,18 +114,33 @@ function DevelopmentModeNotice() {
   }
 }
 
+//Description of the function handleLearnMorePress:
+
+     //@pre None
+
+     // @post Function to lets user "LearnMore"
+
+     // @param None
 function handleLearnMorePress() {
   WebBrowser.openBrowserAsync(
     'https://docs.expo.io/versions/latest/workflow/development-mode/'
   );
 }
 
+//Description of the function handleHelpPress:
+
+     //@pre None
+
+     // @post Function to lead user to help page
+
+     //@param None
 function handleHelpPress() {
   WebBrowser.openBrowserAsync(
     'https://docs.expo.io/versions/latest/workflow/up-and-running/#cant-see-your-changes'
   );
 }
 
+// Description of background, images and texts on the HomeScreen page of the app
 const styles = StyleSheet.create({
   container: {
     flex: 1,

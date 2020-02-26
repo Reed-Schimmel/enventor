@@ -1,6 +1,7 @@
+//Description: This file contains the colors used for the theme and tint of the app
 const tintColor = '#2f95dc';
 
-// http://colormind.io/bootstrap/
+// Reference: http://colormind.io/bootstrap/
 
 export default {
   theme: {

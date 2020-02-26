@@ -1,11 +1,19 @@
+ //Description: This file is to implement the calendar styles.
 import React from 'react'
 import { View, StyleSheet, TextInput } from 'react-native';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import Colors from '../constants/Colors';
 
-// https://github.com/wix/react-native-calendars
-// https://github.com/wix/react-native-calendars/blob/master/src/calendar/day/basic/style.js
+//Reference https://github.com/wix/react-native-calendars
+// Reference https://github.com/wix/react-native-calendars/blob/master/src/calendar/day/basic/style.js
 
+ //Description of the function on the right:
+
+     // @pre None
+
+     //@post Description of calendar style
+
+     // @param selectedDate, onDayPress
 export default ({ selectedDate, onDayPress }) => (
   <Calendar
     style={styles.calendar}
@@ -53,7 +61,7 @@ export default ({ selectedDate, onDayPress }) => (
     }}
   />
 );
-
+//Descriptions of components used in calendar page
 const styles = StyleSheet.create({
   container: {
     flex: 1,

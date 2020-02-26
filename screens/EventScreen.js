@@ -1,3 +1,5 @@
+ //Description: This file is used for the launching of the event page.
+
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Col } from 'react-native-table-component';
@@ -129,10 +131,12 @@ export default class EventScreen extends Component {
       .catch((e) => console.log(e));
   }
 
-  /**
-   * @pre 12/24 hr button is clicked
-   * @post changes the value of the displayed times array
-  */
+
+//Description of the function changeTime:
+
+    // @pre 12/24 hr button is clicked
+
+    // @post  changes the value of the displayed times array
 
   changeTime() {
     let temp = this.state.times //call to 12 hr times array (times)
@@ -160,11 +164,13 @@ export default class EventScreen extends Component {
   }
 
 
-  /**
- * @pre a time slot is selected 
- * @post the state of the busyTimes and trackClicks arrays are updated with the values of the time slot clicked
- * @param {the index of the clicked on time slot} index
-*/
+//Description of the function addName:
+
+  // @pre a time slot is selected
+
+  // @post the state of the busyTimes and trackClicks arrays are updated with the values of the time slot clicked
+
+  //@param {the index of the clicked on time slot} index
   addName(index) {
     let temp3 = this.state.busyTimes // busyTimes tracks the indices that a user has clicked on
     let temp4 = this.state.invalidTimes
@@ -194,11 +200,12 @@ export default class EventScreen extends Component {
     this.setState({ trackClicks: temp })
   }
 
-  /**
- * @pre at least on time slot is selected, an alert is called otherwise 
- * @post adds the name given to each of the clicked on time slots 
-*/
 
+//Description of the function submitName:
+
+  // @pre at least on time slot is selected, an alert is called otherwise
+
+  // @post adds the name given to each of the clicked on time slots
   submitName() {
     let temp = this.state.busyTimes
     let temp2 = this.state.names

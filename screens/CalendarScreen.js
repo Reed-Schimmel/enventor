@@ -1,3 +1,5 @@
+ //Description: This file provides the code for the user interface of the calendar page.
+
 import React, { useState } from 'react';
 import { View, StyleSheet, TextInput, ActivityIndicator } from 'react-native';
 import firebase from 'firebase';
@@ -5,12 +7,23 @@ import firebase from 'firebase';
 import FloatingButton from '../components/FloatingButton'
 import Calendar from '../components/CalendarStyled';
 
+//Description of the function CalendarScreen:
+    //@pre None
+
+    // @post launches the CalendarScreen
+
+    // @param props
 const CalendarScreen = (props) => {
   const [eventName, setEventName] = useState('');
   const [selectedDate, selectDate] = useState('');
   const [dataLoading, setDataLoading] = useState(false);
 
-  // this function is called when the "Make Event" button is pressed
+  //Description of the function onMakeEvent
+       // @pre None
+
+       //@post this function is called when the "Make Event" button is pressed
+
+       // @param None
   const onMakeEvent = async () => {
     setDataLoading(true);
     const eventData = {
@@ -26,7 +39,10 @@ const CalendarScreen = (props) => {
       '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
       '', '', '', '', '', '', '', '', '', '', '', '']
     }
-    // this function call makes a new document in the database w/ the above object as its data
+    //Description of the function below:
+        //@pre None
+        // @post this function call makes a new document in the database with the above object as its data
+        //@param None
     const docRef = await firebase.firestore().collection('events').doc()
     docRef.set(eventData)
       .then(() => {
@@ -78,6 +94,9 @@ const CalendarScreen = (props) => {
     </>
   );
 };
+
+// Description of the background of the page
+
 
 const styles = StyleSheet.create({
   container: {

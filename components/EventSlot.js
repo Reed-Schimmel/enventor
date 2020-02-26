@@ -1,3 +1,4 @@
+ //Description: This file is to implement the event slot.
 import React, {Component} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, ImageBackground } from 'react-native';
 
@@ -9,7 +10,7 @@ export default ({names, time}) => (
     </View>
 
 )
-
+//Descriptions of components used for event slot
 const styles = StyleSheet.create({
     container: {
         borderWidth: 1,
