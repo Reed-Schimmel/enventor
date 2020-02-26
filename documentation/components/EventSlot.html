@@ -120,13 +120,14 @@
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> React, {Component} <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
-<span class="hljs-keyword">import</span> {View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, ImageBackground } <span class="hljs-keyword">from</span> <span class="hljs-string">'react-native'</span>;
+<span class="hljs-keyword">import</span> { View, Text, StyleSheet } <span class="hljs-keyword">from</span> <span class="hljs-string">'react-native'</span>;
 
 
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> ({names, time}) =&gt; (
-    <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">View</span> <span class="hljs-attr">style</span> = <span class="hljs-string">{styles.container}</span>&gt;</span> 
-        <span class="hljs-tag">&lt;<span class="hljs-name">Text</span>&gt;</span>{time}<span class="hljs-tag">&lt;/<span class="hljs-name">Text</span>&gt;</span> 
-        <span class="hljs-tag">&lt;<span class="hljs-name">Text</span>&gt;</span>{names}<span class="hljs-tag">&lt;/<span class="hljs-name">Text</span>&gt;</span> 
+    <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">View</span> <span class="hljs-attr">style</span>=<span class="hljs-string">{[</span>
+        <span class="hljs-attr">styles.container</span>, <span class="hljs-attr">names</span> == <span class="hljs-string">'Invalid Time Slot'</span> ? {<span class="hljs-attr">backgroundColor:</span> "<span class="hljs-attr">grey</span>"} <span class="hljs-attr">:</span> <span class="hljs-attr">null</span>]}&gt;</span> 
+        <span class="hljs-tag">&lt;<span class="hljs-name">Text</span> <span class="hljs-attr">style</span> = <span class="hljs-string">{styles.text}</span>&gt;</span>{time}<span class="hljs-tag">&lt;/<span class="hljs-name">Text</span>&gt;</span> 
+        <span class="hljs-tag">&lt;<span class="hljs-name">Text</span> <span class="hljs-attr">style</span> = <span class="hljs-string">{styles.text}</span>&gt;</span>{names}<span class="hljs-tag">&lt;/<span class="hljs-name">Text</span>&gt;</span> 
     <span class="hljs-tag">&lt;/<span class="hljs-name">View</span>&gt;</span></span>
 
 )</pre></div></div>
@@ -148,31 +149,16 @@
     <span class="hljs-attr">container</span>: {
         <span class="hljs-attr">borderWidth</span>: <span class="hljs-number">1</span>,
         <span class="hljs-attr">height</span>: <span class="hljs-number">50</span>,
-        <span class="hljs-attr">flexDirection</span>: <span class="hljs-string">"row"</span>,
-        <span class="hljs-attr">justifyContent</span>: <span class="hljs-string">"space-evenly"</span>
+        <span class="hljs-attr">flexDirection</span>: <span class="hljs-string">"column"</span>,
+        <span class="hljs-attr">justifyContent</span>: <span class="hljs-string">"space-evenly"</span>,
+        <span class="hljs-attr">alignItems</span>: <span class="hljs-string">"center"</span>,
         },
 
-    <span class="hljs-attr">text</span>: {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-3">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
-              </div>
-              <p>/alignItems: “center”</p>
+        <span class="hljs-attr">text</span>: {
+            <span class="hljs-attr">fontFamily</span>: <span class="hljs-string">'calibri'</span>,
+            <span class="hljs-attr">fontSize</span>: <span class="hljs-number">20</span>,
+        },
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        textAlignVertical: <span class="hljs-string">"center"</span>,
-        
-        
-
-    },
-  
 });</pre></div></div>
             
         </li>

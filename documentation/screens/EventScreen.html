@@ -202,7 +202,7 @@
 
       <span class="hljs-attr">busyTimes</span>: [], <span class="hljs-comment">//an array that pushes the value of the clicked slots index to track which indices to add a name to</span>
 
-      <span class="hljs-attr">trackClicks</span>: [<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-comment">//tracks the rows clicked to change background to white</span>
+      <span class="hljs-attr">clickedSlots</span>: [<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-comment">//tracks the rows clicked to change background to white</span>
         <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>,
         <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>,
         <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>,
@@ -244,8 +244,8 @@
     };
   }
 
-  submitTimeSlots() {
-    firebase.firestore().collection(<span class="hljs-string">'events'</span>).doc(<span class="hljs-keyword">this</span>.eventId)
+  submitTimeSlots = <span class="hljs-keyword">async</span> () =&gt; {
+    <span class="hljs-keyword">return</span> firebase.firestore().collection(<span class="hljs-string">'events'</span>).doc(<span class="hljs-keyword">this</span>.eventId)
       .update({ <span class="hljs-attr">names</span>: <span class="hljs-keyword">this</span>.state.names });
   }</pre></div></div>
             
@@ -315,29 +315,61 @@ it updates the page data with data from the database</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>
-  changeTime() {
-    <span class="hljs-keyword">let</span> temp = <span class="hljs-keyword">this</span>.state.times <span class="hljs-comment">//call to 12 hr times array (times)</span>
-    <span class="hljs-keyword">let</span> temp2 = <span class="hljs-keyword">this</span>.state.times2 <span class="hljs-comment">//call to 24 hr times array (times2)</span>
-    <span class="hljs-keyword">let</span> temp3 = <span class="hljs-keyword">this</span>.state.timeState <span class="hljs-comment">//call to timeState boolean </span>
-    <span class="hljs-keyword">let</span> temp4 = [] <span class="hljs-comment">//used to hold values of times so that times can be set to times2 and vice versa</span>
+  changeTime = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+    <span class="hljs-keyword">let</span> timesTemp = <span class="hljs-keyword">this</span>.state.times <span class="hljs-comment">//call to 12 hr times array (times)</span>
+    <span class="hljs-keyword">let</span> timesTemp2 = <span class="hljs-keyword">this</span>.state.times2 <span class="hljs-comment">//call to 24 hr times array (times2)</span>
+    <span class="hljs-keyword">let</span> timeStateTemp = <span class="hljs-keyword">this</span>.state.timeState <span class="hljs-comment">//call to timeState boolean </span>
+    <span class="hljs-keyword">let</span> temp = [] <span class="hljs-comment">//used to hold values of times so that times can be set to times2 and vice versa</span>
 
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; temp.length; i++) {
-      <span class="hljs-keyword">if</span> (temp3 = <span class="hljs-literal">true</span>) <span class="hljs-comment">//check whether to display 12hr array or 24 hr array </span>
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; timesTemp.length; i++) {
+      <span class="hljs-keyword">if</span> (timeStateTemp = <span class="hljs-literal">true</span>) <span class="hljs-comment">//check whether to display 12hr array or 24 hr array </span>
       {
-        temp4.push(temp[i])
-        temp[i] = temp2[i]
-        temp2[i] = temp4[i]
+        temp.push(timesTemp[i])
+        timesTemp[i] = timesTemp2[i]
+        timesTemp2[i] = temp[i]
       }
       <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (temp3 = <span class="hljs-literal">false</span>) {
-        temp4.push(temp2[i])
-        temp[i] = temp2[i]
-        temp[i] = temp4[i]
+        temp.push(timesTemp2[i])
+        timesTemp[i] = timesTemp2[i]
+        timesTemp[i] = temp[i]
       }
     }
-    temp3 = !temp3 <span class="hljs-comment">//change value of timeState boolean and update the state of the arrays</span>
-    <span class="hljs-keyword">this</span>.setState({ <span class="hljs-attr">times</span>: temp })
-    <span class="hljs-keyword">this</span>.setState({ <span class="hljs-attr">times2</span>: temp2 })
-    <span class="hljs-keyword">this</span>.setState({ <span class="hljs-attr">timeState</span>: temp3 })
+    timeStateTemp = !timeStateTemp <span class="hljs-comment">//change value of timeState boolean and update the state of the arrays</span>
+    <span class="hljs-keyword">this</span>.setState({ <span class="hljs-attr">times</span>: timesTemp, <span class="hljs-attr">times2</span>: timesTemp2, <span class="hljs-attr">timeState</span>: timeStateTemp })
+  }
+
+
+  <span class="hljs-comment">/**
+   * <span class="hljs-doctag">@pre </span>a time slot is selected 
+   * <span class="hljs-doctag">@post </span>the state of the busyTimes and trackClicks arrays are updated with the values of the time slot clicked
+   * <span class="hljs-doctag">@param <span class="hljs-type">{the index of the clicked on time slot}</span> <span class="hljs-variable">index</span></span>
+  */</span>
+  trackClicks = <span class="hljs-function">(<span class="hljs-params">index</span>) =&gt;</span> {
+    <span class="hljs-keyword">let</span> busyTemp = <span class="hljs-keyword">this</span>.state.busyTimes <span class="hljs-comment">// busyTimes tracks the indices that a user has clicked on</span>
+    <span class="hljs-keyword">let</span> invalidTimesTemp = <span class="hljs-keyword">this</span>.state.invalidTimes
+    <span class="hljs-keyword">let</span> clickedSlotsTemp = <span class="hljs-keyword">this</span>.state.clickedSlots
+
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; invalidTimesTemp.length; i++) <span class="hljs-comment">//if the index is in the invalidTimes array display an alert</span>
+    {
+      <span class="hljs-keyword">if</span> (index == invalidTimesTemp[i]) {
+        alert(<span class="hljs-string">"This is an invalid time slot. Please select a different one."</span>)
+        <span class="hljs-keyword">return</span>
+      }
+    }
+    <span class="hljs-keyword">if</span> (busyTemp.length == <span class="hljs-number">0</span>) {
+      busyTemp.push(index) <span class="hljs-comment">//if busyTimes is empty push the index clicked into the array</span>
+      clickedSlotsTemp[index] = busyTemp[<span class="hljs-number">0</span>] <span class="hljs-comment">//add index value to index position in trackClicks array to be able to change background color </span>
+    }
+
+    <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> j = <span class="hljs-number">0</span>; j &lt; busyTemp.length; j++) {
+        <span class="hljs-keyword">if</span> (busyTemp[j] == index)
+          <span class="hljs-keyword">return</span>
+      }
+      busyTemp.push(index) <span class="hljs-comment">//if busyTimes not empty check to see if index already in busyTimes. Push index if no, ignore if yes </span>
+      clickedSlotsTemp[index] = busyTemp[busyTemp.length - <span class="hljs-number">1</span>] <span class="hljs-comment">//add index value to index position in trackClicks array to be able to change background color </span>
+    }
+    <span class="hljs-keyword">this</span>.setState({ <span class="hljs-attr">busyTimes</span>: busyTemp, <span class="hljs-attr">clickedSlots</span>: clickedSlotsTemp })
   }</pre></div></div>
             
         </li>
@@ -349,7 +381,7 @@ it updates the page data with data from the database</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>Description of the function addName:</p>
+              <p>Description of the function submitName:</p>
 
             </div>
             
@@ -362,7 +394,7 @@ it updates the page data with data from the database</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>@pre a time slot is selected</p>
+              <p>@pre at least on time slot is selected, an alert is called otherwise</p>
 
             </div>
             
@@ -375,9 +407,18 @@ it updates the page data with data from the database</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>@post the state of the busyTimes and trackClicks arrays are updated with the values of the time slot clicked</p>
+              <p>@post adds the name given to each of the clicked on time slots</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>  submitName = <span class="hljs-keyword">async</span> () =&gt; {
+    <span class="hljs-keyword">let</span> busyTemp = <span class="hljs-keyword">this</span>.state.busyTimes
+    <span class="hljs-keyword">let</span> namesTemp = <span class="hljs-keyword">this</span>.state.names
+    <span class="hljs-keyword">let</span> clickedSlotsTemp = <span class="hljs-keyword">this</span>.state.clickedSlots
+    <span class="hljs-keyword">if</span> (busyTemp.length === <span class="hljs-number">0</span>) { <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> fix double prompt</span>
+      alert(<span class="hljs-string">"Please select a time slot to submit your name"</span>)<span class="hljs-comment">//display alert if submit is clicked with no time slot selected </span>
+      <span class="hljs-keyword">return</span>
+    }</pre></div></div>
             
         </li>
         
@@ -388,104 +429,24 @@ it updates the page data with data from the database</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>@param {the index of the clicked on time slot} index</p>
+              <p>take in users name</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  addName(index) {
-    <span class="hljs-keyword">let</span> temp3 = <span class="hljs-keyword">this</span>.state.busyTimes <span class="hljs-comment">// busyTimes tracks the indices that a user has clicked on</span>
-    <span class="hljs-keyword">let</span> temp4 = <span class="hljs-keyword">this</span>.state.invalidTimes
-    <span class="hljs-keyword">let</span> temp = <span class="hljs-keyword">this</span>.state.trackClicks
-
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; temp4.length; i++) <span class="hljs-comment">//if the index is in the invalidTimes array display an alert</span>
-    {
-      <span class="hljs-keyword">if</span> (index == temp4[i]) {
-        alert(<span class="hljs-string">"This is an invalid time slot. Please select a different one."</span>)
-        <span class="hljs-keyword">return</span>
-      }
-    }
-    <span class="hljs-keyword">if</span> (temp3.length == <span class="hljs-number">0</span>) {
-      temp3.push(index) <span class="hljs-comment">//if busyTimes is empty push the index clicked into the array</span>
-      temp[index] = temp3[<span class="hljs-number">0</span>] <span class="hljs-comment">//add index value to index position in trackClicks array to be able to change background color </span>
-    }
-
-    <span class="hljs-keyword">else</span> {
-      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> j = <span class="hljs-number">0</span>; j &lt; temp3.length; j++) {
-        <span class="hljs-keyword">if</span> (temp3[j] == index)
-          <span class="hljs-keyword">return</span>
-      }
-      temp3.push(index) <span class="hljs-comment">//if busyTimes not empty check to see if index already in busyTimes. Push index if no, ignore if yes </span>
-      temp[index] = temp3[temp3.length - <span class="hljs-number">1</span>] <span class="hljs-comment">//add index value to index position in trackClicks array to be able to change background color </span>
-    }
-    <span class="hljs-keyword">this</span>.setState({ <span class="hljs-attr">busyTimes</span>: temp3 })
-    <span class="hljs-keyword">this</span>.setState({ <span class="hljs-attr">trackClicks</span>: temp })
-  }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-11">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
-              </div>
-              <p>Description of the function submitName:</p>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-12">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
-              </div>
-              <p>@pre at least on time slot is selected, an alert is called otherwise</p>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-13">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
-              </div>
-              <p>@post adds the name given to each of the clicked on time slots</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  submitName() {
-    <span class="hljs-keyword">let</span> temp = <span class="hljs-keyword">this</span>.state.busyTimes
-    <span class="hljs-keyword">let</span> temp2 = <span class="hljs-keyword">this</span>.state.names
-    <span class="hljs-keyword">let</span> temp4 = <span class="hljs-keyword">this</span>.state.trackClicks
-    <span class="hljs-keyword">if</span> (temp.length == <span class="hljs-number">0</span>) {
-      alert(<span class="hljs-string">"Please select a time slot to submit your name"</span>)<span class="hljs-comment">//display alert if submit is clicked with no time slot selected </span>
-      <span class="hljs-keyword">return</span>
-    }
-
-    <span class="hljs-keyword">let</span> name = prompt(<span class="hljs-string">"Please enter your name"</span>) <span class="hljs-comment">//take in users name</span>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">let</span> name = prompt(<span class="hljs-string">"Please enter your name"</span>) <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> fix double prompt</span>
     <span class="hljs-keyword">if</span> (name != <span class="hljs-literal">null</span> &amp;&amp; name.length &gt; <span class="hljs-number">0</span>) {
-      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; temp.length; i++) {
-        temp2[temp[i]] === <span class="hljs-string">''</span>
-          ? temp2[temp[i]] = name
-          : temp2[temp[i]] += <span class="hljs-string">`, <span class="hljs-subst">${name}</span>`</span>; <span class="hljs-comment">//loop through busy times to find which index values to add names to </span>
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; busyTemp.length; i++) {
+        namesTemp[busyTemp[i]] === <span class="hljs-string">''</span>
+          ? namesTemp[busyTemp[i]] = name
+          : namesTemp[busyTemp[i]] += <span class="hljs-string">`, <span class="hljs-subst">${name}</span>`</span>; <span class="hljs-comment">//loop through busy times to find which index values to add names to </span>
       }
-
-      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; temp4.length; i++) {
-        temp4[i] = <span class="hljs-number">0</span> <span class="hljs-comment">//rest the values of trackClicks array so that background color doesn't stay white after name added</span>
-      }
-      temp = [] <span class="hljs-comment">//empty busyTimes array so that those time slots can be clicked on again </span>
-      <span class="hljs-keyword">this</span>.setState({ <span class="hljs-attr">busyTimes</span>: temp })
-      <span class="hljs-keyword">this</span>.setState({ <span class="hljs-attr">names</span>: temp2 })
-      <span class="hljs-keyword">this</span>.setState({ <span class="hljs-attr">trackClicks</span>: temp4 })
-      <span class="hljs-keyword">this</span>.submitTimeSlots();
     }
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; clickedSlotsTemp.length; i++) {
+      clickedSlotsTemp[i] = <span class="hljs-number">0</span> <span class="hljs-comment">//rest the values of trackClicks array so that background color doesn't stay white after name added</span>
+    }
+    busyTemp = [] <span class="hljs-comment">//empty busyTimes array so that those time slots can be clicked on again </span>
+    <span class="hljs-keyword">await</span> <span class="hljs-keyword">this</span>.submitTimeSlots();
+    <span class="hljs-keyword">this</span>.setState({ <span class="hljs-attr">busyTimes</span>: busyTemp, <span class="hljs-attr">names</span>: namesTemp, <span class="hljs-attr">clickedSlots</span>: clickedSlotsTemp })
   }
 
   render() {
@@ -493,11 +454,10 @@ it updates the page data with data from the database</p>
     <span class="hljs-keyword">const</span> items = state.times.map(<span class="hljs-function">(<span class="hljs-params">times, index</span>) =&gt;</span> ( <span class="hljs-comment">//use map() to display a slot for each value in times array into one variable (items)</span>
       <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">TouchableOpacity</span>
         <span class="hljs-attr">style</span>=<span class="hljs-string">{[</span>
-          <span class="hljs-attr">styles.text</span>, <span class="hljs-attr">state.names</span>[<span class="hljs-attr">index</span>] != <span class="hljs-string">''</span> ? <span class="hljs-attr">styles.text2</span> <span class="hljs-attr">:</span> <span class="hljs-attr">styles.text3</span>, //<span class="hljs-attr">if</span> <span class="hljs-attr">names</span> <span class="hljs-attr">at</span> <span class="hljs-attr">index</span> <span class="hljs-attr">isn</span>'<span class="hljs-attr">t</span> <span class="hljs-attr">empty</span> <span class="hljs-attr">make</span> <span class="hljs-attr">background</span> <span class="hljs-attr">green</span>, <span class="hljs-attr">pink</span> <span class="hljs-attr">otherwise</span>
-          <span class="hljs-attr">state.names</span>[<span class="hljs-attr">index</span>] == <span class="hljs-string">"Invalid Time Slot"</span> ? { <span class="hljs-attr">backgroundColor:</span> "<span class="hljs-attr">grey</span>" } <span class="hljs-attr">:</span> <span class="hljs-attr">null</span>, //<span class="hljs-attr">if</span> <span class="hljs-attr">names</span> <span class="hljs-attr">is</span> '<span class="hljs-attr">invalid</span> <span class="hljs-attr">time</span> <span class="hljs-attr">slot</span>' <span class="hljs-attr">at</span> <span class="hljs-attr">index</span> <span class="hljs-attr">make</span> <span class="hljs-attr">background</span> <span class="hljs-attr">grey</span>
-          <span class="hljs-attr">state.trackClicks</span>[<span class="hljs-attr">index</span>] == <span class="hljs-string">index</span> &amp;&amp; <span class="hljs-attr">index</span> != <span class="hljs-string">0</span> ? <span class="hljs-attr">styles.text4</span> <span class="hljs-attr">:</span> <span class="hljs-attr">null</span> //<span class="hljs-attr">if</span> <span class="hljs-attr">a</span> <span class="hljs-attr">slot</span> <span class="hljs-attr">is</span> <span class="hljs-attr">clicked</span>, <span class="hljs-attr">make</span> <span class="hljs-attr">background</span> <span class="hljs-attr">white</span>
+          <span class="hljs-attr">styles.text</span>, <span class="hljs-attr">state.names</span>[<span class="hljs-attr">index</span>] != <span class="hljs-string">''</span> ? <span class="hljs-attr">styles.addedName</span> <span class="hljs-attr">:</span> <span class="hljs-attr">styles.emptySlots</span>, //<span class="hljs-attr">if</span> <span class="hljs-attr">names</span> <span class="hljs-attr">at</span> <span class="hljs-attr">index</span> <span class="hljs-attr">isn</span>'<span class="hljs-attr">t</span> <span class="hljs-attr">empty</span> <span class="hljs-attr">make</span> <span class="hljs-attr">background</span> <span class="hljs-attr">green</span>, <span class="hljs-attr">pink</span> <span class="hljs-attr">otherwise</span>
+          <span class="hljs-attr">state.clickedSlots</span>[<span class="hljs-attr">index</span>] == <span class="hljs-string">index</span> &amp;&amp; <span class="hljs-attr">index</span> != <span class="hljs-string">0</span> ? <span class="hljs-attr">styles.selectedSlot</span> <span class="hljs-attr">:</span> <span class="hljs-attr">null</span> //<span class="hljs-attr">if</span> <span class="hljs-attr">a</span> <span class="hljs-attr">slot</span> <span class="hljs-attr">is</span> <span class="hljs-attr">clicked</span>, <span class="hljs-attr">make</span> <span class="hljs-attr">background</span> <span class="hljs-attr">white</span>
         ]}
-        <span class="hljs-attr">key</span>=<span class="hljs-string">{index}</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span> =&gt;</span> this.addName(index)} &gt;
+        <span class="hljs-attr">key</span>=<span class="hljs-string">{index}</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span> =&gt;</span> this.trackClicks(index)} &gt;
         <span class="hljs-tag">&lt;<span class="hljs-name">EventSlot</span> <span class="hljs-attr">time</span>=<span class="hljs-string">{state.times[index]}</span> <span class="hljs-attr">names</span>=<span class="hljs-string">{state.names[index]}</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">EventSlot</span>&gt;</span>
       <span class="hljs-tag">&lt;/<span class="hljs-name">TouchableOpacity</span>&gt;</span></span>
     )
@@ -530,8 +490,7 @@ it updates the page data with data from the database</p>
   <span class="hljs-attr">container</span>: { <span class="hljs-comment">//style for event name header</span>
     <span class="hljs-attr">borderWidth</span>: <span class="hljs-number">1</span>,
     <span class="hljs-attr">height</span>: <span class="hljs-number">50</span>,
-    <span class="hljs-attr">backgroundColor</span>: <span class="hljs-string">"lightblue"</span>,
-    <span class="hljs-attr">justifyContent</span>: <span class="hljs-string">"space-evenly"</span>,
+    <span class="hljs-attr">backgroundColor</span>: Colors.theme.darkAccent,
   },
 
   <span class="hljs-attr">eventTitle</span>: {
@@ -539,42 +498,24 @@ it updates the page data with data from the database</p>
     <span class="hljs-attr">fontSize</span>: <span class="hljs-number">25</span>,
   },
 
-  <span class="hljs-attr">text</span>: { <span class="hljs-comment">//style for invalid time slots </span>
-    <span class="hljs-attr">backgroundColor</span>: <span class="hljs-string">'grey'</span>,
-    <span class="hljs-attr">borderWidth</span>: <span class="hljs-number">1</span>,
-    <span class="hljs-attr">height</span>: <span class="hljs-number">50</span>
+  <span class="hljs-attr">addedName</span>: { <span class="hljs-comment">//styles for time slots with added names </span>
+    <span class="hljs-attr">backgroundColor</span>: <span class="hljs-string">'azure'</span>,
   },
-
-  <span class="hljs-attr">text2</span>: { <span class="hljs-comment">//styles for time slots with added names </span>
-    <span class="hljs-attr">backgroundColor</span>: <span class="hljs-string">'lightgreen'</span>,
-    <span class="hljs-attr">borderWidth</span>: <span class="hljs-number">1</span>,
-    <span class="hljs-attr">height</span>: <span class="hljs-number">50</span>
-  },
-  <span class="hljs-attr">text3</span>: { <span class="hljs-comment">//style for empty time slots</span>
-    <span class="hljs-attr">backgroundColor</span>: <span class="hljs-string">'pink'</span>,
+  <span class="hljs-attr">emptySlots</span>: { <span class="hljs-comment">//style for empty time slots</span>
+    <span class="hljs-attr">backgroundColor</span>: Colors.theme.darkAccent,
 
   },
-  <span class="hljs-attr">text4</span>: { <span class="hljs-comment">//style for selected time slots </span>
-    <span class="hljs-attr">backgroundColor</span>: <span class="hljs-string">"white"</span>
+  <span class="hljs-attr">selectedSlot</span>: { <span class="hljs-comment">//style for selected time slots </span>
+    <span class="hljs-attr">backgroundColor</span>: <span class="hljs-string">"beige"</span>
   },
 
   <span class="hljs-attr">submitButton</span>: {},
+  <span class="hljs-attr">text</span>: {},
 
   <span class="hljs-attr">timeButton</span>: { <span class="hljs-comment">//style for 12-24 hour button </span>
-    <span class="hljs-attr">position</span>: <span class="hljs-string">"relative"</span>,
-    <span class="hljs-attr">right</span>: <span class="hljs-number">0</span>,
-    <span class="hljs-attr">bottom</span>: <span class="hljs-number">0</span>,
+    <span class="hljs-attr">left</span>: <span class="hljs-number">30</span>,
     <span class="hljs-attr">height</span>: <span class="hljs-number">45</span>,
     <span class="hljs-attr">width</span>: <span class="hljs-number">75</span>,
-    <span class="hljs-attr">fontSize</span>: <span class="hljs-number">10</span>,
-    <span class="hljs-attr">shadowColor</span>: <span class="hljs-string">"#000"</span>,
-    <span class="hljs-attr">shadowOffset</span>: {
-      <span class="hljs-attr">width</span>: <span class="hljs-number">0</span>,
-      <span class="hljs-attr">height</span>: <span class="hljs-number">9</span>,
-    },
-    <span class="hljs-attr">shadowOpacity</span>: <span class="hljs-number">0</span>,
-    <span class="hljs-attr">shadowRadius</span>: <span class="hljs-number">0</span>,
-
   }
 
 });</pre></div></div>

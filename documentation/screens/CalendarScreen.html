@@ -121,11 +121,34 @@
             
             <div class="content"><div class='highlight'><pre>
 <span class="hljs-keyword">import</span> React, { useState } <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
-<span class="hljs-keyword">import</span> { View, StyleSheet, TextInput, ActivityIndicator } <span class="hljs-keyword">from</span> <span class="hljs-string">'react-native'</span>;
+<span class="hljs-keyword">import</span> { View, StyleSheet, TextInput, ActivityIndicator, ScrollView, TouchableOpacity, Text } <span class="hljs-keyword">from</span> <span class="hljs-string">'react-native'</span>;
 <span class="hljs-keyword">import</span> firebase <span class="hljs-keyword">from</span> <span class="hljs-string">'firebase'</span>;
+<span class="hljs-keyword">import</span> { debounce } <span class="hljs-keyword">from</span> <span class="hljs-string">'lodash'</span>;
 
 <span class="hljs-keyword">import</span> FloatingButton <span class="hljs-keyword">from</span> <span class="hljs-string">'../components/FloatingButton'</span>
-<span class="hljs-keyword">import</span> Calendar <span class="hljs-keyword">from</span> <span class="hljs-string">'../components/CalendarStyled'</span>;</pre></div></div>
+<span class="hljs-keyword">import</span> Calendar <span class="hljs-keyword">from</span> <span class="hljs-string">'../components/CalendarStyled'</span>;
+
+
+<span class="hljs-comment">/**
+ * @description createSearchIndex
+ * @param text
+ */</span>
+<span class="hljs-keyword">const</span> createSearchIndex = <span class="hljs-function">(<span class="hljs-params">text</span>) =&gt;</span> text.toUpperCase().split(<span class="hljs-string">''</span>).sort().join(<span class="hljs-string">''</span>);
+
+<span class="hljs-comment">/**
+ * @description event search function
+ * @param {searchTerm} props 
+ * https://lodash.com/docs/4.17.15#debounce
+ */</span>
+<span class="hljs-keyword">const</span> searchEvents = debounce(<span class="hljs-function">(<span class="hljs-params">text, callback</span>) =&gt;</span> {
+  <span class="hljs-keyword">const</span> searchTerm = createSearchIndex(text);
+  <span class="hljs-built_in">console</span>.log(searchTerm)
+  <span class="hljs-keyword">return</span> firebase.firestore().collection(<span class="hljs-string">'events'</span>)<span class="hljs-comment">//.orderBy('searchTitle')</span>
+    .where(<span class="hljs-string">'searchTitle'</span>, <span class="hljs-string">'&gt;='</span>, searchTerm).where(<span class="hljs-string">'searchTitle'</span>, <span class="hljs-string">'&lt;='</span>, searchTerm + <span class="hljs-string">'\uf8ff'</span>) <span class="hljs-comment">// search for substring</span>
+    .get()
+    .then(<span class="hljs-function">(<span class="hljs-params">querySnapshot</span>) =&gt;</span> {
+      <span class="hljs-keyword">const</span> events = [];
+      querySnapshot.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">doc</span>) </span>{</pre></div></div>
             
         </li>
         
@@ -136,10 +159,51 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>Description of the function CalendarScreen:
-@pre None</p>
+              <p>doc.data() is never undefined for query doc snapshots
+console.log(doc.id, “ =&gt; “, doc.data());</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>        events.push({ ...doc.data(), <span class="hljs-attr">eventId</span>: doc.id });
+      });
+      callback(events);
+    })
+    .catch(<span class="hljs-function">(<span class="hljs-params">error</span>) =&gt;</span> {
+      <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Error getting documents: "</span>, error);
+      <span class="hljs-keyword">return</span> [];
+    });
+}, <span class="hljs-number">500</span>);
+
+
+<span class="hljs-comment">/** Description of the function CalendarScreen:
+@pre None
+@post launches the CalendarScreen
+@param props 
+*/</span>
+<span class="hljs-keyword">const</span> CalendarScreen = <span class="hljs-function">(<span class="hljs-params">props</span>) =&gt;</span> {
+  <span class="hljs-keyword">const</span> [eventName, setEventName] = useState(<span class="hljs-string">''</span>);
+  <span class="hljs-keyword">const</span> [selectedDate, selectDate] = useState(<span class="hljs-string">''</span>);
+  <span class="hljs-keyword">const</span> [searchDates, setSearchDates] = useState([]);
+  <span class="hljs-keyword">const</span> [dataLoading, setDataLoading] = useState(<span class="hljs-literal">false</span>);
+
+  <span class="hljs-keyword">const</span> inputTextChange = <span class="hljs-function">(<span class="hljs-params">text</span>) =&gt;</span> {
+    text ? searchEvents(text, setSearchDates) : setSearchDates([]);
+    setEventName(text);
+  }
+
+  <span class="hljs-keyword">const</span> renderResults = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> (searchDates.length &gt; <span class="hljs-number">0</span>)
+    &amp;&amp; <span class="xml"><span class="hljs-tag">&lt;&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">Text</span> <span class="hljs-attr">style</span>=<span class="hljs-string">{{</span> <span class="hljs-attr">textAlign:</span> '<span class="hljs-attr">center</span>', <span class="hljs-attr">fontSize:</span> <span class="hljs-attr">24</span>, <span class="hljs-attr">margin:</span> '<span class="hljs-attr">10</span>%' }} <span class="hljs-attr">allowFontScaling</span>&gt;</span> Search Results <span class="hljs-tag">&lt;/<span class="hljs-name">Text</span>&gt;</span>
+      {searchDates.map(result =&gt; (
+        <span class="hljs-tag">&lt;<span class="hljs-name">TouchableOpacity</span>
+          <span class="hljs-attr">style</span>=<span class="hljs-string">{{</span> <span class="hljs-attr">flex:</span> <span class="hljs-attr">1</span>, <span class="hljs-attr">marginHorizontal:</span> '<span class="hljs-attr">15</span>%', <span class="hljs-attr">marginVertical:</span> <span class="hljs-attr">5</span>, <span class="hljs-attr">flexDirection:</span> '<span class="hljs-attr">row</span>', <span class="hljs-attr">justifyContent:</span> '<span class="hljs-attr">space-between</span>' }}
+          <span class="hljs-attr">onPress</span>=<span class="hljs-string">{()</span> =&gt;</span> props.navigation.navigate('Event', {eventId: result.eventId, eventData: result })}
+        &gt;
+          <span class="hljs-tag">&lt;<span class="hljs-name">Text</span> <span class="hljs-attr">style</span>=<span class="hljs-string">{{</span> <span class="hljs-attr">fontSize:</span> <span class="hljs-attr">14</span>, <span class="hljs-attr">textAlign:</span> '<span class="hljs-attr">auto</span>' }} <span class="hljs-attr">allowFontScaling</span>&gt;</span>{result.title}<span class="hljs-tag">&lt;/<span class="hljs-name">Text</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">Text</span> <span class="hljs-attr">style</span>=<span class="hljs-string">{{</span> <span class="hljs-attr">fontSize:</span> <span class="hljs-attr">14</span>, <span class="hljs-attr">textAlign:</span> '<span class="hljs-attr">auto</span>' }} <span class="hljs-attr">allowFontScaling</span> &gt;</span>{result.dateString}<span class="hljs-tag">&lt;/<span class="hljs-name">Text</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">TouchableOpacity</span>&gt;</span>
+      ))}
+    <span class="hljs-tag">&lt;/&gt;</span></span>;</pre></div></div>
             
         </li>
         
@@ -150,7 +214,8 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>@post launches the CalendarScreen</p>
+              <p>Description of the function onMakeEvent
+@pre None</p>
 
             </div>
             
@@ -163,14 +228,9 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>@param props</p>
+              <p>@post this function is called when the “Make Event” button is pressed</p>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> CalendarScreen = <span class="hljs-function">(<span class="hljs-params">props</span>) =&gt;</span> {
-  <span class="hljs-keyword">const</span> [eventName, setEventName] = useState(<span class="hljs-string">''</span>);
-  <span class="hljs-keyword">const</span> [selectedDate, selectDate] = useState(<span class="hljs-string">''</span>);
-  <span class="hljs-keyword">const</span> [dataLoading, setDataLoading] = useState(<span class="hljs-literal">false</span>);</pre></div></div>
             
         </li>
         
@@ -181,33 +241,6 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Description of the function onMakeEvent
-@pre None</p>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-6">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              <p>@post this function is called when the “Make Event” button is pressed</p>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-7">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
-              </div>
               <p>@param None</p>
 
             </div>
@@ -217,25 +250,26 @@
     <span class="hljs-keyword">const</span> eventData = {
       ...selectedDate,
       <span class="hljs-attr">title</span>: eventName,
+      <span class="hljs-attr">searchTitle</span>: createSearchIndex(eventName), <span class="hljs-comment">// creates searchable index from title</span>
       <span class="hljs-attr">names</span>: [<span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>,
-      <span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>,
-      <span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>,
-      <span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>,
-      <span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>,
-      <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>,
-      <span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>,
-      <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>,
-      <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>]
+        <span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>,
+        <span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>,
+        <span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>,
+        <span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>,
+        <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>,
+        <span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>, <span class="hljs-string">'Invalid Time Slot'</span>,
+        <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>,
+        <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>, <span class="hljs-string">''</span>]
     }</pre></div></div>
             
         </li>
         
         
-        <li id="section-8">
+        <li id="section-6">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p>Description of the function below:
 @pre None
@@ -256,41 +290,60 @@
         <span class="hljs-built_in">console</span>.log(e);
         setDataLoading(<span class="hljs-literal">false</span>);
       });
-  }
-  <span class="hljs-built_in">console</span>.log(eventName, selectedDate)
-  <span class="hljs-keyword">return</span> (
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>console.log({eventName}, {selectedDate})</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">return</span> (
     <span class="xml"><span class="hljs-tag">&lt;&gt;</span>
       {
-          dataLoading &amp;&amp;
-          <span class="hljs-tag">&lt;<span class="hljs-name">ActivityIndicator</span>
-            <span class="hljs-attr">size</span>=<span class="hljs-string">"large"</span>
-            <span class="hljs-attr">style</span>=<span class="hljs-string">{{</span>
-              <span class="hljs-attr">position:</span> '<span class="hljs-attr">absolute</span>',
-              <span class="hljs-attr">top:</span> '<span class="hljs-attr">50</span>%',
-              <span class="hljs-attr">left:</span> '<span class="hljs-attr">50</span>%',
-              <span class="hljs-attr">alignSelf:</span> '<span class="hljs-attr">center</span>',
-              <span class="hljs-attr">zIndex:</span> <span class="hljs-attr">10</span>,
-            }}
-          /&gt;</span>}
-          {(eventName &amp;&amp; selectDate) &amp;&amp; <span class="hljs-tag">&lt;<span class="hljs-name">FloatingButton</span>
-            <span class="hljs-attr">title</span>=<span class="hljs-string">"Make Event"</span>
-            <span class="hljs-attr">onPress</span>=<span class="hljs-string">{onMakeEvent}</span>
-            <span class="hljs-attr">style</span>=<span class="hljs-string">{styles.floatingButton}</span>
-          /&gt;</span>
-      }
-      <span class="hljs-tag">&lt;<span class="hljs-name">View</span> <span class="hljs-attr">style</span>=<span class="hljs-string">{styles.container}</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-name">TextInput</span>
-          <span class="hljs-attr">value</span>=<span class="hljs-string">{eventName}</span>
-          <span class="hljs-attr">onChangeText</span>=<span class="hljs-string">{text</span> =&gt;</span> setEventName(text)}
-          style={styles.input}
-        /&gt;
-        <span class="hljs-tag">&lt;<span class="hljs-name">Calendar</span>
-          <span class="hljs-attr">onDayPress</span>=<span class="hljs-string">{date</span> =&gt;</span> {
-            console.log(date);
-            selectDate(date);
+        dataLoading &amp;&amp;
+        <span class="hljs-tag">&lt;<span class="hljs-name">ActivityIndicator</span>
+          <span class="hljs-attr">size</span>=<span class="hljs-string">"large"</span>
+          <span class="hljs-attr">style</span>=<span class="hljs-string">{{</span>
+            <span class="hljs-attr">position:</span> '<span class="hljs-attr">absolute</span>',
+            <span class="hljs-attr">top:</span> '<span class="hljs-attr">50</span>%',
+            <span class="hljs-attr">left:</span> '<span class="hljs-attr">50</span>%',
+            <span class="hljs-attr">alignSelf:</span> '<span class="hljs-attr">center</span>',
+            <span class="hljs-attr">zIndex:</span> <span class="hljs-attr">10</span>,
           }}
-          selectedDate={selectedDate}
-        /&gt;
+        /&gt;</span>}
+      {(eventName &amp;&amp; selectedDate) &amp;&amp; <span class="hljs-tag">&lt;<span class="hljs-name">FloatingButton</span>
+        <span class="hljs-attr">title</span>=<span class="hljs-string">"Make Event"</span>
+        <span class="hljs-attr">onPress</span>=<span class="hljs-string">{onMakeEvent}</span>
+        <span class="hljs-attr">style</span>=<span class="hljs-string">{styles.floatingButton}</span>
+      /&gt;</span>}
+
+      <span class="hljs-tag">&lt;<span class="hljs-name">View</span> <span class="hljs-attr">style</span>=<span class="hljs-string">{{</span> <span class="hljs-attr">flexDirection:</span> "<span class="hljs-attr">row</span>", <span class="hljs-attr">flex:</span> <span class="hljs-attr">1</span> }}&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">View</span> <span class="hljs-attr">style</span>=<span class="hljs-string">{styles.container}</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">TextInput</span>
+            <span class="hljs-attr">value</span>=<span class="hljs-string">{eventName}</span>
+            <span class="hljs-attr">onChangeText</span>=<span class="hljs-string">{inputTextChange}</span>
+            <span class="hljs-attr">style</span>=<span class="hljs-string">{styles.input}</span>
+          /&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">Calendar</span>
+            <span class="hljs-attr">onDayPress</span>=<span class="hljs-string">{date</span> =&gt;</span> {
+              console.log(date);
+              selectDate(date);
+            }}
+            selectedDate={selectedDate}
+            searchDates={searchDates}
+          /&gt;
+        <span class="hljs-tag">&lt;/<span class="hljs-name">View</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">ScrollView</span> <span class="hljs-attr">style</span>=<span class="hljs-string">{{</span> <span class="hljs-attr">flex:</span> <span class="hljs-attr">-1</span>, <span class="hljs-attr">maxWidth:</span> '<span class="hljs-attr">33</span>%' }}&gt;</span>
+          {renderResults()}
+        <span class="hljs-tag">&lt;/<span class="hljs-name">ScrollView</span>&gt;</span>
       <span class="hljs-tag">&lt;/<span class="hljs-name">View</span>&gt;</span>
     <span class="hljs-tag">&lt;/&gt;</span></span>
   );
@@ -299,11 +352,11 @@
         </li>
         
         
-        <li id="section-9">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <p>Description of the background of the page</p>
 
@@ -319,6 +372,7 @@
   <span class="hljs-attr">floatingButton</span>: {},
   <span class="hljs-attr">input</span>: {
     <span class="hljs-attr">height</span>: <span class="hljs-string">'10%'</span>,
+    <span class="hljs-attr">fontSize</span>: <span class="hljs-number">32</span>,
   }
 });
 
