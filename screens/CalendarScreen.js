@@ -16,7 +16,6 @@ const CalendarScreen = (props) => {
     const eventData = {
       ...selectedDate,
       title: eventName,
-      people: [],
       names: ['Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
       'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
       'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
