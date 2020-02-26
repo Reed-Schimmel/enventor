@@ -238,7 +238,7 @@ export default class EventScreen extends Component {
           style={styles.submitButton}
         />
         <FloatingButton
-          title="Time Mode"
+          title="Toggle 12/24 Hour Format"
           onPress={() => this.changeTime()}
           style={{ right: undefined, left: 30 }}
         />
