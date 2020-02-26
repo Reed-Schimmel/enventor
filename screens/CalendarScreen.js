@@ -16,7 +16,15 @@ const CalendarScreen = (props) => {
     const eventData = {
       ...selectedDate,
       title: eventName,
-      people: [],
+      names: ['Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
+      'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
+      'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
+      'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
+      'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
+      '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
+      'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
+      '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
+      '', '', '', '', '', '', '', '', '', '', '', '']
     }
     // this function call makes a new document in the database w/ the above object as its data
     const docRef = await firebase.firestore().collection('events').doc()
@@ -25,7 +33,7 @@ const CalendarScreen = (props) => {
         setEventName('');
         selectDate('');
         setDataLoading(false);
-        props.navigation.navigate('Event', { eventData: { ...eventData, eventId: docRef.id } });
+        props.navigation.navigate('Event', { eventId: docRef.id, eventData });
       })
       .catch((e) => {
         console.log(e);

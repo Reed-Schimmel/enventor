@@ -4,12 +4,14 @@ import { Col } from 'react-native-table-component';
 import EventSlot from '../components/EventSlot'
 import FloatingButton from '../components/FloatingButton'
 import firebase from 'firebase';
+import Colors from '../constants/Colors';
 
 export default class EventScreen extends Component {
   constructor(props) {
     super(props);
     this.props = props;
     this.eventData = props.navigation.getParam('eventData') //get the data from the calandar screen
+    this.eventId = props.navigation.getParam('eventId');
     this.state = {
 
       timeState: true, //if true the table is displayed in 12 hour mode, displayed in 24 hour mode if false
@@ -64,7 +66,7 @@ export default class EventScreen extends Component {
       ['22:00'], ['22:20'], ['22:40'],
       ['23:00'], ['23:20'], ['23:40']],
 
-      names: ['Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot', //array of string arrays to track the names of the attendees st each time slot
+      names: this.eventData.names || ['Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
         'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
         'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
         'Invalid Time Slot', 'Invalid Time Slot', 'Invalid Time Slot',
@@ -87,9 +89,44 @@ export default class EventScreen extends Component {
     }
   }
 
+  // this lets us navigate back to home from this screen
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: navigation.getParam('title'),
+      headerTitleStyle: {
+        textAlign: 'center',
+        alignSelf: 'center',
+        flex: 1,
+        color: 'white',
+      },
+      headerStyle: {
+        backgroundColor: Colors.theme.main,
+      },
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+          <Text style={{ marginLeft: 15, color: 'white' }}>Create Event</Text>
+        </TouchableOpacity>
+      )
+    };
+  }
+
   submitTimeSlots() {
-    firebase.firestore().collection('events').doc(this.eventData.eventId)
+    firebase.firestore().collection('events').doc(this.eventId)
       .update({ names: this.state.names });
+  }
+
+  // this is called after the screen renders for the first time
+  // it updates the page data with data from the database
+  async componentDidMount() {
+    firebase.firestore().collection('events').doc(this.eventId).get()
+      .then((docSnapshot) => {
+        const eventData = docSnapshot.data();
+        this.eventData = eventData;
+        console.log(this.props.navigation)
+        this.props.navigation.setParams({ title: `${eventData.title}` })
+        this.setState({ ...this.state, names: eventData.names });
+      })
+      .catch((e) => console.log(e));
   }
 
   /**
@@ -213,17 +250,12 @@ export default class EventScreen extends Component {
           onPress={() => this.submitName()}
           style={styles.submitButton}
         />
-        <ScrollView style={styles.ScrollView}>
-          <FloatingButton 
-          title="12/24"
-          onPress={()=>this.changeTime()}
-          style={styles.timeButton}
+        <FloatingButton
+          title="Toggle 12/24 Hour"
+          onPress={() => this.changeTime()}
+          style={{ right: undefined, left: 30 }}
         />
-          <View style={styles.container}>
-            <Text
-              style={styles.eventTitle}>{this.eventData.title} {/* display the event title at the top of the page */}
-            </Text>
-          </View>
+        <ScrollView style={styles.ScrollView}>
           <Col
             data={items} //display the time slots in a column format 
           />
