@@ -91,12 +91,13 @@ export default class EventScreen extends Component {
   // this lets us navigate back to home from this screen
   static navigationOptions = ({ navigation }) => {
     return {
+      title: navigation.getParam('title'),
       headerRight: () => (
         <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-          <Text style={{ marginRight: 15 }}>Home</Text>
+          <Text style={{ marginRight: 15 }}>Create Event</Text>
         </TouchableOpacity>
       )
-    }
+    };
   }
 
   submitTimeSlots() {
@@ -111,6 +112,8 @@ export default class EventScreen extends Component {
       .then((docSnapshot) => {
         const eventData = docSnapshot.data();
         this.eventData = eventData;
+        console.log(this.props.navigation)
+        this.props.navigation.setParams({ title: `${eventData.title}` })
         this.setState({ ...this.state, names: eventData.names });
       })
       .catch((e) => console.log(e));
@@ -238,16 +241,11 @@ export default class EventScreen extends Component {
           style={styles.submitButton}
         />
         <FloatingButton
-          title="Toggle 12/24 Hour Format"
+          title="Toggle 12/24 Hour"
           onPress={() => this.changeTime()}
           style={{ right: undefined, left: 30 }}
         />
         <ScrollView style={styles.ScrollView}>
-          <View style={styles.container}>
-            <Text
-              style={styles.eventTitle}>{this.eventData.title} {/* display the event title at the top of the page */}
-            </Text>
-          </View>
           <Col
             data={items} //display the time slots in a column format 
           />
