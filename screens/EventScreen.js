@@ -237,12 +237,12 @@ export default class EventScreen extends Component {
           onPress={() => this.submitName()}
           style={styles.submitButton}
         />
+        <FloatingButton
+          title="Time Mode"
+          onPress={() => this.changeTime()}
+          style={{ right: undefined, left: 30 }}
+        />
         <ScrollView style={styles.ScrollView}>
-          <FloatingButton
-            title="12/24"
-            onPress={() => this.changeTime()}
-            style={styles.timeButton}
-          />
           <View style={styles.container}>
             <Text
               style={styles.eventTitle}>{this.eventData.title} {/* display the event title at the top of the page */}
